@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react"
 import { Area as IArea } from "./interfaces/Area.ts"
-import Area from "./components/Area.tsx"
-import SelectionRectangle from "./components/SelectionRectangle.tsx"
+import Area from "./components/Area/Area.tsx"
+import SelectionRectangle from "./components/SelectionRectangle/SelectionRectangle.tsx"
 import { useAreas } from "./contexts/AreasContext.tsx"
 
 function App() {

@@ -1,5 +1,6 @@
 import React from "react"
-import { Area as IArea } from "../interfaces/Area.ts"
+import { Area as IArea } from "../../interfaces/Area.ts"
+// import { useAreas } from "../contexts/AreasContext.tsx"
 
 interface AreaProps {
   area: IArea
@@ -9,6 +10,8 @@ interface AreaProps {
 }
 
 const Area: React.FC<AreaProps> = ({ area, selectedArea, handleClickArea, sizeInfo }) => {
+  // const { dispatch } = useAreas()
+
   return (
     <>
       <div
@@ -36,6 +39,7 @@ const Area: React.FC<AreaProps> = ({ area, selectedArea, handleClickArea, sizeIn
             borderRadius: "4px",
             fontSize: "12px",
             zIndex: 999,
+            cursor: "pointer",
           }}
         >
           {sizeInfo}
