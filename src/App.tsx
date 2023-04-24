@@ -1,14 +1,16 @@
-import React, { useState, useEffect, useReducer, useRef } from "react"
-import { areasReducer } from "./reducers/areasReducer.ts"
+import React, { useState, useEffect, useRef } from "react"
 import { Area as IArea } from "./interfaces/Area.ts"
 import Area from "./components/Area.tsx"
 import SelectionRectangle from "./components/SelectionRectangle.tsx"
+import { useAreas } from "./contexts/AreasContext.tsx"
 
 function App() {
-  const [areas, dispatch] = useReducer(areasReducer, [], (initialState) => {
-    const savedAreas = localStorage.getItem("areas")
-    return savedAreas ? JSON.parse(savedAreas) : initialState
-  })
+  // const [areas, dispatch] = useReducer(areasReducer, [], (initialState) => {
+  //   const savedAreas = localStorage.getItem("areas")
+  //   return savedAreas ? JSON.parse(savedAreas) : initialState
+  // })
+
+  const { areas, dispatch } = useAreas()
 
   const containerRef = useRef<HTMLDivElement>(null)
   const [isSelecting, setIsSelecting] = useState(false)
