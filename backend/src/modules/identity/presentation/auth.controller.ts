@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   HttpCode,
+  Logger,
   Next,
   NotFoundException,
   Param,
@@ -16,6 +17,7 @@ import { randomBytes, timingSafeEqual } from "node:crypto"
 import type { NextFunction, Request, Response } from "express"
 import passport from "passport"
 import { env, isProviderEnabled } from "../../../config/env"
+import { ForbiddenError } from "../../../shared/domain/errors"
 import { AuthenticateSessionUseCase } from "../application/authenticate-session.use-case"
 import { GetCurrentUserUseCase } from "../application/get-current-user.use-case"
 import { SignInWithOAuthUseCase } from "../application/sign-in-with-oauth.use-case"
@@ -46,6 +48,8 @@ const sameState = (a: unknown, b: unknown) => {
 @Controller("auth")
 @Throttle({ default: { limit: 30, ttl: 60_000 } })
 export class AuthController {
+  private readonly logger = new Logger(AuthController.name)
+
   constructor(
     private readonly signIn: SignInWithOAuthUseCase,
     private readonly signOut: SignOutEverywhereUseCase,
@@ -106,13 +110,18 @@ export class AuthController {
     clearStateCookie(res)
     if (!sameState(req.query.state, expected)) return fail()
     passport.authenticate(provider, { session: false }, async (err: unknown, identity: OAuthIdentity | false) => {
-      if (err || !identity) return fail()
+      if (err || !identity) {
+        if (err) this.logger.warn(`${provider} oauth failed: ${(err as Error).message ?? err}`)
+        return fail()
+      }
       try {
         const { token } = await this.signIn.execute(identity)
         setSessionCookie(res, token)
         res.redirect(`${env.frontendUrl}/dashboard`)
-      } catch {
-        fail("email_unverified")
+      } catch (error) {
+        if (error instanceof ForbiddenError) return fail("email_unverified")
+        this.logger.error(`${provider} sign-in failed`, (error as Error).stack)
+        fail()
       }
     })(req, res)
   }
