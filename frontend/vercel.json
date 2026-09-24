@@ -6,7 +6,11 @@
   "outputDirectory": "dist",
   "rewrites": [
     {
-      "source": "/((?!editor/|assets/|favicon.svg).*)",
+      "source": "/api/:path*",
+      "destination": "https://aledobe-api-lucascandidos-projects.vercel.app/api/:path*"
+    },
+    {
+      "source": "/((?!api/|editor/|assets/|favicon.svg).*)",
       "destination": "/index.html"
     }
   ],
