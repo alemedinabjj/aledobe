@@ -1,6 +1,6 @@
 import { Injectable, OnModuleDestroy, OnModuleInit } from "@nestjs/common"
 import { PrismaPg } from "@prisma/adapter-pg"
-import { PrismaClient } from "@prisma/client"
+import { PrismaClient } from "./client"
 
 const DRIVER_ONLY_PARAMS = ["schema", "connection_limit", "pgbouncer", "sslmode"]
 

@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common"
-import type { User as UserRecord } from "@prisma/client"
+import type { User as UserRecord } from "../../../shared/infrastructure/prisma/client"
 import { PrismaService } from "../../../shared/infrastructure/prisma/prisma.service"
 import type { OAuthProvider } from "../domain/oauth-identity"
 import { User } from "../domain/user.entity"

@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common"
-import type { Project as ProjectRecord } from "@prisma/client"
+import type { Project as ProjectRecord } from "../../../shared/infrastructure/prisma/client"
 import { PrismaService } from "../../../shared/infrastructure/prisma/prisma.service"
 import { Project } from "../domain/project.entity"
 import { ProjectRepository } from "../domain/project.repository"

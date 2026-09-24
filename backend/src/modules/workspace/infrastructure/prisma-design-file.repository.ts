@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common"
-import { Prisma, type File as FileRecord } from "@prisma/client"
+import { Prisma, type File as FileRecord } from "../../../shared/infrastructure/prisma/client"
 import { PrismaService } from "../../../shared/infrastructure/prisma/prisma.service"
 import { DesignFile } from "../domain/design-file.entity"
 import { DesignFileRepository } from "../domain/design-file.repository"
