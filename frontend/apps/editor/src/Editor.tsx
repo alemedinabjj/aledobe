@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { TooltipProvider, Toaster } from "@aledobe/ui"
 import { useEditor } from "./core/store"
 import { useShortcuts } from "./core/shortcuts"
@@ -52,14 +52,39 @@ export default function Editor({ doc, onChange, autosaveDelay = 800, saveStatus 
     }
   }, [])
 
+  const [pending, setPending] = useState(false)
+  const pendingRef = useRef(false)
+
+  const flush = useCallback(() => {
+    if (!pendingRef.current) return
+    pendingRef.current = false
+    setPending(false)
+    onChangeRef.current?.(useEditor.getState().doc)
+  }, [])
+
   useEffect(() => {
     if (!dirty || !onChangeRef.current) return
-    const t = setTimeout(() => onChangeRef.current?.(useEditor.getState().doc), autosaveDelay)
+    pendingRef.current = true
+    setPending(true)
+    const t = setTimeout(flush, autosaveDelay)
     return () => clearTimeout(t)
-  }, [dirty, autosaveDelay])
+  }, [dirty, autosaveDelay, flush])
+
+  useEffect(() => {
+    const warn = (e: BeforeUnloadEvent) => {
+      if (!pendingRef.current) return
+      flush()
+      e.preventDefault()
+    }
+    window.addEventListener("beforeunload", warn)
+    return () => {
+      window.removeEventListener("beforeunload", warn)
+      flush()
+    }
+  }, [flush])
 
   return (
-    <HostContext.Provider value={{ saveStatus, ...host }}>
+    <HostContext.Provider value={{ saveStatus: pending ? "unsaved" : saveStatus, ...host }}>
       <TooltipProvider delayDuration={400}>
         <div className="aledobe-editor dark flex h-full w-full overflow-hidden bg-background text-foreground">
           {!panelsHidden && <LeftPanel />}
