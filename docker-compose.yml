@@ -46,7 +46,6 @@ services:
         NODE_IMAGE: ${NODE_IMAGE:-node:22-bookworm-slim}
         NGINX_IMAGE: ${NGINX_IMAGE:-nginx:1.27-alpine}
         VITE_API_URL: /api
-        VITE_DEV_LOGIN: ${AUTH_DEV_LOGIN:-true}
     restart: unless-stopped
     depends_on:
       backend:
