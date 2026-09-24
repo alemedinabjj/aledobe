@@ -1,12 +1,13 @@
-import { useState, type FormEvent } from "react"
+import { useEffect, useState, type FormEvent } from "react"
 import { Link, Navigate, useNavigate, useSearchParams } from "react-router"
 import { motion } from "motion/react"
 import { ArrowLeft, Loader2 } from "lucide-react"
-import { Button, Input, Label, Separator, toast } from "@aledobe/ui"
+import { Badge, Button, Input, Label, Separator, toast } from "@aledobe/ui"
 import { Logo } from "../components/Logo"
 import { GithubIcon, GoogleIcon, LinkedinIcon } from "../components/BrandIcons"
 import { useSession } from "../lib/session"
 import type { Provider } from "../lib/types"
+import type { AuthOptions } from "../lib/api"
 
 const PROVIDERS: { id: Provider; label: string; icon: React.ReactNode }[] = [
   { id: "google", label: "Continue with Google", icon: <GoogleIcon /> },
@@ -27,8 +28,16 @@ export default function Login() {
   const [email, setEmail] = useState("")
   const [busy, setBusy] = useState(false)
   const error = params.get("error")
+  const [options, setOptions] = useState<AuthOptions | null>(null)
   const local = api?.mode === "local"
-  const devLogin = local || import.meta.env.VITE_DEV_LOGIN === "true"
+  const devLogin = !!options?.devLogin
+
+  useEffect(() => {
+    api
+      ?.authOptions()
+      .then(setOptions)
+      .catch(() => setOptions({ providers: [], devLogin: false }))
+  }, [api])
 
   if (user) return <Navigate to="/dashboard" replace />
 
@@ -73,21 +82,25 @@ export default function Login() {
             </div>
           )}
           <div className="mt-8 flex flex-col gap-3">
-            {PROVIDERS.map((p) => (
-              <Button
-                key={p.id}
-                variant="outline"
-                size="lg"
-                disabled={local}
-                className="justify-start gap-3 bg-white/[0.02] text-sm"
-                onClick={() => {
-                  if (api) window.location.href = api.loginUrl(p.id)
-                }}
-              >
-                {p.icon}
-                <span className="flex-1 text-center">{p.label}</span>
-              </Button>
-            ))}
+            {PROVIDERS.map((p) => {
+              const enabled = !!options?.providers.includes(p.id)
+              return (
+                <Button
+                  key={p.id}
+                  variant="outline"
+                  size="lg"
+                  disabled={!enabled}
+                  className="justify-start gap-3 bg-white/[0.02] text-sm"
+                  onClick={() => {
+                    if (api && enabled) window.location.href = api.loginUrl(p.id)
+                  }}
+                >
+                  {p.icon}
+                  <span className="flex-1 text-center">{p.label}</span>
+                  {options && !enabled && !local && <Badge variant="outline">Em breve</Badge>}
+                </Button>
+              )
+            })}
           </div>
           {local && (
             <p className="mt-3 text-xs text-muted-foreground">

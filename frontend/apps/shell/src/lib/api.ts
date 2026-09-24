@@ -31,11 +31,17 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
   return res.json()
 }
 
+export interface AuthOptions {
+  providers: Provider[]
+  devLogin: boolean
+}
+
 export interface Backend {
   mode: "remote" | "local"
   me(): Promise<User | null>
   logout(): Promise<void>
   loginUrl(provider: Provider): string
+  authOptions(): Promise<AuthOptions>
   devLogin?(name: string, email: string): Promise<User>
   listProjects(): Promise<Project[]>
   createProject(name: string): Promise<Project>
@@ -64,6 +70,7 @@ const remote: Backend = {
   },
   logout: () => request("/auth/logout", { method: "POST" }),
   loginUrl: (provider) => `${API_URL}/auth/${provider}`,
+  authOptions: () => request("/auth/providers"),
   devLogin: (name, email) => request("/auth/dev-login", { method: "POST", body: JSON.stringify({ name, email }) }),
   listProjects: () => request("/projects"),
   createProject: (name) => request("/projects", { method: "POST", body: JSON.stringify({ name }) }),
@@ -129,6 +136,7 @@ const local: Backend = {
     writeDb(db)
   },
   loginUrl: () => "",
+  authOptions: async () => ({ providers: [], devLogin: true }),
   async devLogin(name, email) {
     const db = readDb()
     db.user = { id: id(), name, email, avatarUrl: null, plan: "free" }
