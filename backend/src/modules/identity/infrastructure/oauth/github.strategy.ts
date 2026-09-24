@@ -12,6 +12,7 @@ export class GithubStrategy extends PassportStrategy(Strategy, "github") {
       clientSecret: env.github.clientSecret,
       callbackURL: `${env.apiUrl}/auth/github/callback`,
       scope: ["read:user", "user:email"],
+      allRawEmails: true,
     })
   }
 
