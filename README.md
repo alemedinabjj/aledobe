@@ -64,10 +64,13 @@ Requirements: Node 22+, Docker.
 ### Everything with Docker
 
 ```bash
+cp .env.example .env
+echo "POSTGRES_PASSWORD=$(openssl rand -hex 24)" >> .env
+echo "JWT_SECRET=$(openssl rand -hex 48)" >> .env
 docker compose up --build
 ```
 
-Open http://localhost:8080. In this local stack the developer login is enabled, so you can sign in without OAuth credentials.
+Open http://localhost:8080. No credentials are hardcoded in the repository: Docker Compose refuses to start until `.env` provides them. In this local stack the developer login is enabled, so you can sign in without OAuth credentials.
 
 ### Local development
 
@@ -85,6 +88,8 @@ cp apps/shell/.env.example apps/shell/.env
 npm install
 npm run dev
 ```
+
+In `backend/.env`, replace `<POSTGRES_PASSWORD>` in `DATABASE_URL` and `DIRECT_URL` with the value from the root `.env`.
 
 - Shell: http://localhost:5173 · Editor (standalone): http://localhost:5174 · API: http://localhost:3000/api
 
