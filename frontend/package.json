@@ -12,10 +12,14 @@
     "dev:editor": "npm run dev -w @aledobe/editor",
     "build": "npm run build -w @aledobe/editor && npm run build -w @aledobe/shell",
     "typecheck": "npm run typecheck --workspaces --if-present",
-    "format": "prettier --write \"apps/*/src/**/*.{ts,tsx,css}\" \"packages/*/src/**/*.{ts,tsx,css}\""
+    "format": "prettier --write \"apps/*/src/**/*.{ts,tsx,css}\" \"packages/*/src/**/*.{ts,tsx,css}\"",
+    "test": "npm run test --workspaces --if-present",
+    "test:e2e": "playwright test",
+    "build:static": "EDITOR_BASE=/editor/ npm run build -w @aledobe/editor && VITE_EDITOR_URL=/editor npm run build -w @aledobe/shell && rm -rf dist && mkdir dist && cp -r apps/shell/dist/. dist/ && cp -r apps/editor/dist dist/editor && rm -rf dist/editor/@mf-types* dist/editor/index.html"
   },
   "devDependencies": {
     "@module-federation/vite": "^1.22.1",
+    "@playwright/test": "^1.56.1",
     "@tailwindcss/vite": "^4.3.3",
     "@types/node": "^26.6.2",
     "@types/react": "^19.3.0",
@@ -24,6 +28,7 @@
     "prettier": "^3.9.9",
     "tailwindcss": "^4.3.3",
     "typescript": "~5.9",
-    "vite": "^8.3.1"
+    "vite": "^8.3.1",
+    "vitest": "^3.2.7"
   }
 }

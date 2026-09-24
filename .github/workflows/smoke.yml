@@ -1,0 +1,44 @@
+name: Smoke test deployment
+
+on:
+  deployment_status:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: Base URL to test
+        required: true
+        default: https://aledobe-pi.vercel.app
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    if: github.event_name == 'workflow_dispatch' || (github.event.deployment_status.state == 'success' && !contains(github.event.deployment.environment, 'aledobe-api'))
+    runs-on: ubuntu-latest
+    env:
+      BASE_URL: ${{ github.event.inputs.url || github.event.deployment_status.environment_url }}
+    steps:
+      - name: Target
+        run: echo "Testing $BASE_URL"
+      - name: Frontend is served with security headers
+        run: |
+          headers=$(curl -fsSI "$BASE_URL/")
+          echo "$headers" | grep -i "^content-security-policy:"
+          echo "$headers" | grep -i "^strict-transport-security:"
+          echo "$headers" | grep -i "^x-frame-options: deny"
+          curl -fsS -o /dev/null "$BASE_URL/editor/remoteEntry.js"
+          curl -fsS "$BASE_URL/login" | grep -q '<div id="root">'
+      - name: API is reachable through the frontend and connected to the database
+        run: |
+          curl -sS "$BASE_URL/api/health" | tee /dev/stderr | grep -q '"status":"ok"'
+          curl -sS "$BASE_URL/api/auth/providers" | tee /dev/stderr | grep -q '"google"'
+      - name: Protected routes and hardening
+        run: |
+          test "$(curl -s -o /dev/null -w '%{http_code}' "$BASE_URL/api/auth/me")" = "401"
+          test "$(curl -s -o /dev/null -w '%{http_code}' "$BASE_URL/api/projects")" = "401"
+          test "$(curl -s -o /dev/null -w '%{http_code}' -X POST -H 'Content-Type: application/json' -d '{"email":"x@y.z"}' "$BASE_URL/api/auth/dev-login")" = "404"
+          test "$(curl -s -o /dev/null -w '%{http_code}' -X POST -H 'Origin: https://evil.example' -H 'Content-Type: application/json' -d '{}' "$BASE_URL/api/projects")" = "403"
+          location=$(curl -s -o /dev/null -w '%{redirect_url}' "$BASE_URL/api/auth/google")
+          echo "$location" | grep -q "^https://accounts.google.com/"
+          echo "$location" | grep -q "redirect_uri=https%3A%2F%2Faledobe-pi.vercel.app%2Fapi%2Fauth%2Fgoogle%2Fcallback"
