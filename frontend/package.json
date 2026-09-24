@@ -1,0 +1,29 @@
+{
+  "name": "aledobe-frontend",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w @aledobe/editor & npm run dev -w @aledobe/shell",
+    "dev:shell": "npm run dev -w @aledobe/shell",
+    "dev:editor": "npm run dev -w @aledobe/editor",
+    "build": "npm run build -w @aledobe/editor && npm run build -w @aledobe/shell",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "format": "prettier --write \"apps/*/src/**/*.{ts,tsx,css}\" \"packages/*/src/**/*.{ts,tsx,css}\""
+  },
+  "devDependencies": {
+    "@module-federation/vite": "^1.22.1",
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/node": "^26.6.2",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.1",
+    "prettier": "^3.9.9",
+    "tailwindcss": "^4.3.3",
+    "typescript": "~5.9",
+    "vite": "^8.3.1"
+  }
+}

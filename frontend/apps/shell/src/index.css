@@ -1,0 +1,7 @@
+@import "tailwindcss";
+@import "@aledobe/ui/theme.css";
+@source "../../../packages/ui/src";
+
+html {
+  scroll-behavior: smooth;
+}
