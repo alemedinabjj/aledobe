@@ -19,7 +19,7 @@
   },
   "devDependencies": {
     "@module-federation/vite": "^1.22.1",
-    "@playwright/test": "^1.56.1",
+    "@playwright/test": "^1.63.0",
     "@tailwindcss/vite": "^4.3.3",
     "@types/node": "^26.6.2",
     "@types/react": "^19.3.0",
