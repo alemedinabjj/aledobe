@@ -16,7 +16,7 @@
     "test:watch": "vitest",
     "test:e2e": "vitest run --config vitest.e2e.config.ts",
     "postinstall": "prisma generate",
-    "vercel-build": "prisma generate && prisma migrate deploy && nest build && mkdir -p public"
+    "vercel-build": "prisma generate && prisma migrate deploy && nest build && mkdir -p public && printf 'User-agent: *\\nDisallow: /\\n' > public/robots.txt"
   },
   "dependencies": {
     "@nestjs/common": "^12.1.0",
