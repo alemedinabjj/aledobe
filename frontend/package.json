@@ -12,10 +12,13 @@
     "dev:editor": "npm run dev -w @aledobe/editor",
     "build": "npm run build -w @aledobe/editor && npm run build -w @aledobe/shell",
     "typecheck": "npm run typecheck --workspaces --if-present",
-    "format": "prettier --write \"apps/*/src/**/*.{ts,tsx,css}\" \"packages/*/src/**/*.{ts,tsx,css}\""
+    "format": "prettier --write \"apps/*/src/**/*.{ts,tsx,css}\" \"packages/*/src/**/*.{ts,tsx,css}\"",
+    "test": "npm run test --workspaces --if-present",
+    "test:e2e": "playwright test"
   },
   "devDependencies": {
     "@module-federation/vite": "^1.22.1",
+    "@playwright/test": "^1.56.1",
     "@tailwindcss/vite": "^4.3.3",
     "@types/node": "^26.6.2",
     "@types/react": "^19.3.0",
@@ -24,6 +27,7 @@
     "prettier": "^3.9.9",
     "tailwindcss": "^4.3.3",
     "typescript": "~5.9",
-    "vite": "^8.3.1"
+    "vite": "^8.3.1",
+    "vitest": "^3.2.7"
   }
 }
