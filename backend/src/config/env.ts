@@ -4,6 +4,11 @@ config()
 
 const bool = (v: string | undefined) => v === "true" || v === "1"
 
+const origins = (process.env.FRONTEND_URL ?? "http://localhost:5173")
+  .split(",")
+  .map((o) => o.trim().replace(/\/$/, ""))
+  .filter(Boolean)
+
 const nodeEnv = process.env.NODE_ENV ?? "development"
 const production = nodeEnv === "production"
 
@@ -12,11 +17,8 @@ export const env = {
   production,
   port: Number(process.env.PORT ?? 3000),
   apiUrl: (process.env.API_URL ?? "http://localhost:3000/api").replace(/\/$/, ""),
-  frontendUrl: (process.env.FRONTEND_URL ?? "http://localhost:5173").replace(/\/$/, ""),
-  allowedOrigins: (process.env.FRONTEND_URL ?? "http://localhost:5173")
-    .split(",")
-    .map((o) => o.trim().replace(/\/$/, ""))
-    .filter(Boolean),
+  frontendUrl: origins[0],
+  allowedOrigins: origins,
   jwtSecret: process.env.JWT_SECRET ?? "",
   cookieSecure: production || bool(process.env.COOKIE_SECURE),
   devLogin: !production && bool(process.env.AUTH_DEV_LOGIN),
