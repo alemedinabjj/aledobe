@@ -28,6 +28,7 @@ services:
     environment:
       NODE_ENV: ${NODE_ENV:-development}
       DATABASE_URL: postgresql://${POSTGRES_USER:-aledobe}:${POSTGRES_PASSWORD:-aledobe}@postgres:5432/${POSTGRES_DB:-aledobe}?schema=public
+      DIRECT_URL: postgresql://${POSTGRES_USER:-aledobe}:${POSTGRES_PASSWORD:-aledobe}@postgres:5432/${POSTGRES_DB:-aledobe}?schema=public
       PORT: 3000
       API_URL: ${PUBLIC_URL:-http://localhost:8080}/api
       FRONTEND_URL: ${PUBLIC_URL:-http://localhost:8080}

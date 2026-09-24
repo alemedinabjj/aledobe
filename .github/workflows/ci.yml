@@ -38,6 +38,7 @@ jobs:
     env:
       NODE_ENV: test
       DATABASE_URL: postgresql://aledobe:aledobe@localhost:5432/aledobe_test?schema=public
+      DIRECT_URL: postgresql://aledobe:aledobe@localhost:5432/aledobe_test?schema=public
       JWT_SECRET: ci-only-secret-that-is-long-enough-0123456789
       FRONTEND_URL: http://localhost:5173
       API_URL: http://localhost:3000/api
