@@ -1,12 +1,11 @@
-require("../dist/instrument")
-const { NestFactory } = require("@nestjs/core")
-const { AppModule } = require("../dist/app.module")
-const { configureApp } = require("../dist/app.setup")
-const { assertSecureConfig } = require("../dist/config/env")
-
 let handler
 
 async function bootstrap() {
+  require("../dist/instrument")
+  const { NestFactory } = require("@nestjs/core")
+  const { AppModule } = require("../dist/app.module")
+  const { configureApp } = require("../dist/app.setup")
+  const { assertSecureConfig } = require("../dist/config/env")
   assertSecureConfig()
   const app = configureApp(await NestFactory.create(AppModule, { rawBody: true, logger: ["error", "warn", "log"] }))
   await app.init()
@@ -31,6 +30,14 @@ module.exports = async (req, res) => {
     console.error("bootstrap failed", error)
     res.statusCode = 503
     res.setHeader("content-type", "application/json")
-    res.end(JSON.stringify({ status: "unavailable", error: error?.name, code: error?.code, detail: redact(error?.message) }))
+    res.end(
+      JSON.stringify({
+        status: "unavailable",
+        node: process.version,
+        error: error?.name,
+        code: error?.code,
+        detail: redact(error?.message),
+      }),
+    )
   }
 }
