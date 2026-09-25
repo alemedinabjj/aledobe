@@ -13,11 +13,24 @@ async function bootstrap() {
   return app.getHttpAdapter().getInstance()
 }
 
+const redact = (text) =>
+  String(text ?? "")
+    .replace(/[a-z][a-z0-9+.-]*:\/\/\S+/gi, "[url]")
+    .replace(/(password|secret|token)\S*/gi, "[redacted]")
+    .slice(0, 300)
+
 module.exports = async (req, res) => {
   handler ??= bootstrap().catch((error) => {
     handler = undefined
     throw error
   })
-  const app = await handler
-  return app(req, res)
+  try {
+    const app = await handler
+    return app(req, res)
+  } catch (error) {
+    console.error("bootstrap failed", error)
+    res.statusCode = 503
+    res.setHeader("content-type", "application/json")
+    res.end(JSON.stringify({ status: "unavailable", error: error?.name, code: error?.code, detail: redact(error?.message) }))
+  }
 }
