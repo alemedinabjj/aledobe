@@ -14,7 +14,7 @@ const { SESSION_COOKIE } = require("./dist/modules/identity/presentation/session
     provider: "github",
     providerAccountId: email,
     email,
-    name: "E2E Designer",
+    name: process.env.E2E_NAME ?? "E2E Designer",
     avatarUrl: null,
     emailVerified: true,
   })
