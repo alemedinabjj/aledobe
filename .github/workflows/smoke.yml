@@ -35,10 +35,16 @@ jobs:
           curl -sS "$BASE_URL/api/auth/providers" | tee /dev/stderr | grep -q '"google"'
       - name: Protected routes and hardening
         run: |
-          test "$(curl -s -o /dev/null -w '%{http_code}' "$BASE_URL/api/auth/me")" = "401"
-          test "$(curl -s -o /dev/null -w '%{http_code}' "$BASE_URL/api/projects")" = "401"
-          test "$(curl -s -o /dev/null -w '%{http_code}' -X POST -H 'Content-Type: application/json' -d '{"email":"x@y.z"}' "$BASE_URL/api/auth/dev-login")" = "404"
-          test "$(curl -s -o /dev/null -w '%{http_code}' -X POST -H 'Origin: https://evil.example' -H 'Content-Type: application/json' -d '{}' "$BASE_URL/api/projects")" = "403"
+          expect() {
+            actual=$(curl -s -o /tmp/body -w '%{http_code}' "${@:2}")
+            echo "$1 <- $actual ${*:2}"
+            if [ "$actual" != "$1" ]; then head -c 300 /tmp/body; echo; exit 1; fi
+          }
+          expect 401 "$BASE_URL/api/auth/me"
+          expect 401 "$BASE_URL/api/projects"
+          expect 404 -X POST -H 'Content-Type: application/json' -d '{"email":"x@y.z"}' "$BASE_URL/api/auth/dev-login"
+          expect 403 -X POST -H 'Origin: https://evil.example' -H 'Content-Type: application/json' -d '{}' "$BASE_URL/api/projects"
           location=$(curl -s -o /dev/null -w '%{redirect_url}' "$BASE_URL/api/auth/google")
+          echo "google -> $location"
           echo "$location" | grep -q "^https://accounts.google.com/"
           echo "$location" | grep -q "redirect_uri=https%3A%2F%2Faledobe-alemedinabjjs-projects.vercel.app%2Fapi%2Fauth%2Fgoogle%2Fcallback"
