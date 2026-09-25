@@ -7,7 +7,7 @@ on:
       url:
         description: Base URL to test
         required: true
-        default: https://aledobe-pi.vercel.app
+        default: https://aledobe-alemedinabjjs-projects.vercel.app
 
 permissions:
   contents: read
@@ -41,4 +41,4 @@ jobs:
           test "$(curl -s -o /dev/null -w '%{http_code}' -X POST -H 'Origin: https://evil.example' -H 'Content-Type: application/json' -d '{}' "$BASE_URL/api/projects")" = "403"
           location=$(curl -s -o /dev/null -w '%{redirect_url}' "$BASE_URL/api/auth/google")
           echo "$location" | grep -q "^https://accounts.google.com/"
-          echo "$location" | grep -q "redirect_uri=https%3A%2F%2Faledobe-pi.vercel.app%2Fapi%2Fauth%2Fgoogle%2Fcallback"
+          echo "$location" | grep -q "redirect_uri=https%3A%2F%2Faledobe-alemedinabjjs-projects.vercel.app%2Fapi%2Fauth%2Fgoogle%2Fcallback"

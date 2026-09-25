@@ -7,7 +7,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://aledobe-api-lucascandidos-projects.vercel.app/api/:path*"
+      "destination": "https://aledobe-api-alemedinabjjs-projects.vercel.app/api/:path*"
     },
     {
       "source": "/((?!api/|editor/|assets/|favicon.svg).*)",
