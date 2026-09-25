@@ -16,7 +16,7 @@
     "test:watch": "vitest",
     "test:e2e": "vitest run --config vitest.e2e.config.ts",
     "postinstall": "prisma generate",
-    "vercel-build": "prisma generate && prisma migrate deploy && nest build && mkdir -p public && printf 'User-agent: *\\nDisallow: /\\n' > public/robots.txt"
+    "vercel-build": "prisma generate && if [ \"$VERCEL_ENV\" = production ]; then prisma migrate deploy; fi && nest build && node scripts/bundle-serverless.mjs && mkdir -p public && printf 'User-agent: *\\nDisallow: /\\n' > public/robots.txt"
   },
   "dependencies": {
     "@nestjs/common": "^12.1.0",
@@ -55,6 +55,7 @@
     "@types/passport-oauth2": "^1.8.0",
     "@types/pg": "^8.23.1",
     "@types/supertest": "^7.2.1",
+    "esbuild": "^0.28.2",
     "prettier": "^3.9.9",
     "supertest": "^7.3.0",
     "typescript": "~5.9",

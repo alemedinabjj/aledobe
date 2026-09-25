@@ -247,9 +247,7 @@ export default function Dashboard() {
               {user?.plan === "pro" && <Badge variant="neon">Pro</Badge>}
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" side="top" className="w-56">
-              <DropdownMenuLabel>
-                {api?.mode === "local" ? "Guest workspace (this browser)" : "Account"}
-              </DropdownMenuLabel>
+              <DropdownMenuLabel>Account</DropdownMenuLabel>
               <DropdownMenuItem onSelect={() => setUpgrade(true)}>
                 <CreditCard /> {user?.plan === "pro" ? "Manage billing" : "Upgrade to Pro"}
               </DropdownMenuItem>

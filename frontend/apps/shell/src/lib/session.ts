@@ -1,10 +1,11 @@
 import { create } from "zustand"
-import { backend, type Backend } from "./api"
+import { api, apiAvailable, type Backend } from "./api"
 import type { User } from "./types"
 
 interface Session {
   user: User | null
-  api: Backend | null
+  api: Backend
+  available: boolean
   ready: boolean
   init: () => Promise<void>
   setUser: (user: User | null) => void
@@ -13,22 +14,25 @@ interface Session {
 
 export const useSession = create<Session>((set, get) => ({
   user: null,
-  api: null,
+  api,
+  available: true,
   ready: false,
   init: async () => {
     if (get().ready) return
-    const api = await backend()
+    const available = await apiAvailable()
     let user: User | null = null
-    try {
-      user = await api.me()
-    } catch {
-      user = null
+    if (available) {
+      try {
+        user = await api.me()
+      } catch {
+        user = null
+      }
     }
-    set({ api, user, ready: true })
+    set({ available, user, ready: true })
   },
   setUser: (user) => set({ user }),
   logout: async () => {
-    await get().api?.logout()
+    await get().api.logout()
     set({ user: null })
   },
 }))

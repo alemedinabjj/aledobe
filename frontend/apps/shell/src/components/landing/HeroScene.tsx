@@ -1,5 +1,5 @@
 import { useMemo, useRef } from "react"
-import { Canvas, useFrame } from "@react-three/fiber"
+import { Canvas, useFrame, useThree } from "@react-three/fiber"
 import { ContactShadows, Float, RoundedBox, Sparkles } from "@react-three/drei"
 import * as THREE from "three"
 
@@ -188,6 +188,22 @@ function Board({ onStep }: { onStep?: (i: number) => void }) {
   )
 }
 
+function FitCamera() {
+  const camera = useThree((s) => s.camera) as THREE.PerspectiveCamera
+  const aspect = useThree((s) => s.size.width / Math.max(1, s.size.height))
+  useFrame(() => {
+    const halfWidth = 4.4
+    const halfHeight = 3.1
+    const tan = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2))
+    const z = Math.max(halfHeight / tan, halfWidth / (tan * aspect), 7.2)
+    if (Math.abs(camera.position.z - z) > 0.01) {
+      camera.position.z = z
+      camera.updateProjectionMatrix()
+    }
+  })
+  return null
+}
+
 export function HeroScene({ onStep }: { onStep?: (i: number) => void }) {
   return (
     <Canvas
@@ -197,6 +213,7 @@ export function HeroScene({ onStep }: { onStep?: (i: number) => void }) {
       gl={{ antialias: true, alpha: true }}
       style={{ background: "transparent" }}
     >
+      <FitCamera />
       <ambientLight intensity={0.35} />
       <directionalLight position={[3, 4, 6]} intensity={1.4} castShadow shadow-mapSize={[1024, 1024]} />
       <pointLight position={[-4, 2, 3]} intensity={30} color="#a855f7" />

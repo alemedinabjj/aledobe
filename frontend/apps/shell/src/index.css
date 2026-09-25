@@ -5,3 +5,19 @@
 html {
   scroll-behavior: smooth;
 }
+
+@utility wide {
+  margin-inline: auto;
+  width: 100%;
+  max-width: 1920px;
+  padding-inline: 1rem;
+  @media (width >= 40rem) {
+    padding-inline: 1.5rem;
+  }
+  @media (width >= 64rem) {
+    padding-inline: 2.5rem;
+  }
+  @media (width >= 96rem) {
+    padding-inline: 4rem;
+  }
+}

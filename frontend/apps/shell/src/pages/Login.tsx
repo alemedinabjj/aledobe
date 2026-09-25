@@ -18,10 +18,11 @@ const PROVIDERS: { id: Provider; label: string; icon: React.ReactNode }[] = [
 const ERRORS: Record<string, string> = {
   oauth_failed: "We couldn't sign you in with that provider. Please try again.",
   provider_disabled: "This provider isn't configured on the server yet.",
+  email_unverified: "Your provider didn't confirm this email address. Verify it and try again.",
 }
 
 export default function Login() {
-  const { user, api, setUser } = useSession()
+  const { user, api, available, ready, setUser } = useSession()
   const [params] = useSearchParams()
   const navigate = useNavigate()
   const [name, setName] = useState("")
@@ -29,24 +30,24 @@ export default function Login() {
   const [busy, setBusy] = useState(false)
   const error = params.get("error")
   const [options, setOptions] = useState<AuthOptions | null>(null)
-  const local = api?.mode === "local"
-  const devLogin = !!options?.devLogin
+  const devLogin = available && !!options?.devLogin
 
   useEffect(() => {
+    if (!ready || !available) return
     api
-      ?.authOptions()
+      .authOptions()
       .then(setOptions)
       .catch(() => setOptions({ providers: [], devLogin: false }))
-  }, [api])
+  }, [api, ready, available])
 
   if (user) return <Navigate to="/dashboard" replace />
 
   const submit = async (e: FormEvent) => {
     e.preventDefault()
-    if (!api?.devLogin) return
+    if (!devLogin) return
     setBusy(true)
     try {
-      const u = await api.devLogin(name.trim() || "Designer", email.trim() || "designer@aledobe.app")
+      const u = await api.devLogin(name.trim(), email.trim())
       setUser(u)
       navigate("/dashboard")
     } catch (err) {
@@ -92,37 +93,44 @@ export default function Login() {
                   disabled={!enabled}
                   className="justify-start gap-3 bg-white/[0.02] text-sm"
                   onClick={() => {
-                    if (api && enabled) window.location.href = api.loginUrl(p.id)
+                    if (enabled) window.location.href = api.loginUrl(p.id)
                   }}
                 >
                   {p.icon}
                   <span className="flex-1 text-center">{p.label}</span>
-                  {options && !enabled && !local && <Badge variant="outline">Em breve</Badge>}
+                  {options && !enabled && <Badge variant="outline">Em breve</Badge>}
                 </Button>
               )
             })}
           </div>
-          {local && (
-            <p className="mt-3 text-xs text-muted-foreground">
-              The Aledobe API is offline, so OAuth is unavailable. Continue as a guest — files are saved in this
-              browser.
-            </p>
+          {ready && !available && (
+            <div className="mt-6 rounded-lg border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-rose-200">
+              Sign-in is temporarily unavailable. Please try again in a few minutes.
+            </div>
           )}
           {devLogin && (
             <>
               <div className="my-8 flex items-center gap-3 text-xs text-muted-foreground">
-                <Separator className="flex-1" /> {local ? "guest mode" : "developer login"}{" "}
+                <Separator className="flex-1" /> developer login
                 <Separator className="flex-1" />
               </div>
               <form onSubmit={submit} className="flex flex-col gap-4">
                 <div className="grid gap-2">
                   <Label htmlFor="name">Name</Label>
-                  <Input id="name" placeholder="Ada Lovelace" value={name} onChange={(e) => setName(e.target.value)} />
+                  <Input
+                    id="name"
+                    required
+                    maxLength={80}
+                    placeholder="Ada Lovelace"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                  />
                 </div>
                 <div className="grid gap-2">
                   <Label htmlFor="email">Email</Label>
                   <Input
                     id="email"
+                    required
                     type="email"
                     placeholder="ada@studio.com"
                     value={email}

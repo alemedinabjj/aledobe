@@ -61,7 +61,7 @@ export default function FilePage() {
         patch.thumbnail = await mod.thumbnail(next)
       }
       await api.updateFile(file.id, patch)
-      setStatus(api.mode === "local" ? "offline" : "saved")
+      setStatus("saved")
     } catch (e) {
       setStatus("error")
       toast.error(`Couldn't save: ${(e as Error).message}`)

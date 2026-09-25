@@ -62,7 +62,7 @@ const FEATURES = [
 
 export function Features() {
   return (
-    <section id="features" className="relative mx-auto max-w-6xl px-6 py-28">
+    <section id="features" className="relative wide py-20 sm:py-28">
       <div className="mx-auto max-w-2xl text-center">
         <Badge variant="neon" className="mb-4">
           Everything you need
@@ -116,9 +116,9 @@ const FLOW = [
 
 export function HowItWorks() {
   return (
-    <section id="how" className="relative border-y border-white/[0.06] bg-panel/60 py-28">
-      <div className="mx-auto max-w-6xl px-6">
-        <div className="grid gap-12 lg:grid-cols-[1fr_1.2fr]">
+    <section id="how" className="relative border-y border-white/[0.06] bg-panel/60 py-20 sm:py-28">
+      <div className="wide">
+        <div className="grid gap-12 lg:grid-cols-[1fr_1.2fr] xl:gap-20">
           <div>
             <Badge variant="neon" className="mb-4">
               How it works
@@ -194,7 +194,7 @@ const PLANS = [
 
 export function Pricing() {
   return (
-    <section id="pricing" className="mx-auto max-w-6xl px-6 py-28">
+    <section id="pricing" className="wide py-20 sm:py-28">
       <div className="mx-auto max-w-2xl text-center">
         <Badge variant="neon" className="mb-4">
           Pricing
@@ -204,7 +204,7 @@ export function Pricing() {
           Pro is optional and keeps the lights on. Payments are handled securely by Stripe.
         </p>
       </div>
-      <div className="mx-auto mt-14 grid max-w-4xl gap-6 md:grid-cols-2">
+      <div className="mx-auto mt-14 grid max-w-5xl gap-6 md:grid-cols-2">
         {PLANS.map((p) => (
           <Card
             key={p.name}
@@ -250,7 +250,7 @@ export function Pricing() {
 
 export function CallToAction() {
   return (
-    <section className="mx-auto max-w-6xl px-6 pb-28">
+    <section className="wide pb-20 sm:pb-28">
       <div className="relative overflow-hidden rounded-3xl border border-primary/30 bg-gradient-to-br from-violet-950 via-[#12091f] to-fuchsia-950 px-8 py-16 text-center">
         <div className="pointer-events-none absolute inset-0 bg-grid opacity-60 [mask-image:radial-gradient(ellipse_at_center,black,transparent_75%)]" />
         <h2 className="relative font-display text-4xl font-bold tracking-tight sm:text-5xl">
@@ -270,7 +270,7 @@ export function CallToAction() {
 export function Footer() {
   return (
     <footer className="border-t border-white/[0.06] py-10">
-      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-6 text-sm text-muted-foreground sm:flex-row">
+      <div className="wide flex flex-col items-center justify-between gap-4 text-sm text-muted-foreground sm:flex-row">
         <span>© {new Date().getFullYear()} Aledobe. Built for designers who ship.</span>
         <div className="flex gap-6">
           <a href="#features" className="hover:text-foreground">
