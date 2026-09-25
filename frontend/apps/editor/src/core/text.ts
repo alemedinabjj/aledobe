@@ -44,7 +44,8 @@ export function layoutText(n: SceneNode): TextLayout {
 
   const c = context()
   c.font = fontCss(n)
-  const measure = (s: string) => c.measureText(s).width + letterSpacing * s.length
+  c.fontKerning = letterSpacing !== 0 ? "none" : "auto"
+  const measure = (s: string) => c.measureText(s).width + letterSpacing * Array.from(s).length
   const metrics = c.measureText("Hg")
   const ascent = metrics.fontBoundingBoxAscent ?? fontSize * 0.8
   const descent = metrics.fontBoundingBoxDescent ?? fontSize * 0.2

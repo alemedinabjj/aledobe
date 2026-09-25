@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react"
 import { TooltipProvider, Toaster } from "@aledobe/ui"
 import { useEditor } from "./core/store"
 import { useShortcuts } from "./core/shortcuts"
-import { clearTextCache } from "./core/text"
+import { clearTextCache, fontCss } from "./core/text"
 import type { Doc } from "./core/types"
 import { Canvas } from "./components/canvas/Canvas"
 import { LeftPanel } from "./components/LeftPanel"
@@ -34,23 +34,24 @@ export default function Editor({ doc, onChange, autosaveDelay = 800, saveStatus 
 
   useEffect(() => {
     let cancelled = false
-    document.fonts?.ready.then(() => {
+    const refresh = () => {
       if (cancelled) return
       clearTextCache()
-      const s = useEditor.getState()
-      s.set({ doc: { ...s.doc } })
-      s.commit(() => {})
-    })
-    const onLoad = () => {
-      clearTextCache()
-      useEditor.getState().commit(() => {})
+      useEditor.getState().refreshText()
     }
-    document.fonts?.addEventListener?.("loadingdone", onLoad)
+    const fonts = new Set(
+      Object.values(doc.nodes)
+        .filter((n) => n.type === "text")
+        .map((n) => fontCss(n)),
+    )
+    Promise.all([...fonts].map((font) => document.fonts?.load(font).catch(() => []))).then(refresh)
+    document.fonts?.ready.then(refresh)
+    document.fonts?.addEventListener?.("loadingdone", refresh)
     return () => {
       cancelled = true
-      document.fonts?.removeEventListener?.("loadingdone", onLoad)
+      document.fonts?.removeEventListener?.("loadingdone", refresh)
     }
-  }, [])
+  }, [doc])
 
   const [pending, setPending] = useState(false)
   const pendingRef = useRef(false)

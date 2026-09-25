@@ -62,7 +62,7 @@ const FEATURES = [
 
 export function Features() {
   return (
-    <section id="features" className="relative wide py-20 sm:py-28">
+    <section id="features" className="relative wide scroll-mt-20 py-20 sm:py-28">
       <div className="mx-auto max-w-2xl text-center">
         <Badge variant="neon" className="mb-4">
           Everything you need
@@ -116,7 +116,7 @@ const FLOW = [
 
 export function HowItWorks() {
   return (
-    <section id="how" className="relative border-y border-white/[0.06] bg-panel/60 py-20 sm:py-28">
+    <section id="how" className="relative scroll-mt-16 border-y border-white/[0.06] bg-panel/60 py-20 sm:py-28">
       <div className="wide">
         <div className="grid gap-12 lg:grid-cols-[1fr_1.2fr] xl:gap-20">
           <div>
@@ -194,7 +194,7 @@ const PLANS = [
 
 export function Pricing() {
   return (
-    <section id="pricing" className="wide py-20 sm:py-28">
+    <section id="pricing" className="wide scroll-mt-20 py-20 sm:py-28">
       <div className="mx-auto max-w-2xl text-center">
         <Badge variant="neon" className="mb-4">
           Pricing
