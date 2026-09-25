@@ -26,6 +26,7 @@ import { toUserView } from "../application/user.view"
 import type { OAuthIdentity } from "../domain/oauth-identity"
 import { CurrentUserId } from "./current-user.decorator"
 import { DevLoginDto } from "./dev-login.dto"
+import { DevLoginEnabledGuard } from "./dev-login.guard"
 import {
   clearSessionCookie,
   clearStateCookie,
@@ -78,9 +79,9 @@ export class AuthController {
   }
 
   @Post("dev-login")
+  @UseGuards(DevLoginEnabledGuard)
   @Throttle({ default: { limit: 10, ttl: 60_000 } })
   async devLogin(@Body() dto: DevLoginDto, @Res({ passthrough: true }) res: Response) {
-    if (!env.devLogin) throw new NotFoundException()
     const { user, token } = await this.signIn.execute({
       provider: "dev",
       providerAccountId: dto.email.toLowerCase(),
