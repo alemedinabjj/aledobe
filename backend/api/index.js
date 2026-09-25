@@ -1,15 +1,5 @@
-let handler
-
-async function bootstrap() {
-  require("../dist/instrument")
-  const { NestFactory } = require("@nestjs/core")
-  const { AppModule } = require("../dist/app.module")
-  const { configureApp } = require("../dist/app.setup")
-  const { assertSecureConfig } = require("../dist/config/env")
-  assertSecureConfig()
-  const app = configureApp(await NestFactory.create(AppModule, { rawBody: true, logger: ["error", "warn", "log"] }))
-  await app.init()
-  return app.getHttpAdapter().getInstance()
+function getHandler() {
+  return require("../dist/serverless.bundle.cjs").getHandler()
 }
 
 const redact = (text) =>
@@ -19,12 +9,8 @@ const redact = (text) =>
     .slice(0, 300)
 
 module.exports = async (req, res) => {
-  handler ??= bootstrap().catch((error) => {
-    handler = undefined
-    throw error
-  })
   try {
-    const app = await handler
+    const app = await getHandler()
     return app(req, res)
   } catch (error) {
     console.error("bootstrap failed", error)

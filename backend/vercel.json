@@ -6,7 +6,7 @@
   "outputDirectory": "public",
   "functions": {
     "api/index.js": {
-      "includeFiles": "{dist/**,prisma/generated/**}",
+      "includeFiles": "{dist/serverless.bundle.cjs,prisma/generated/**}",
       "maxDuration": 30
     }
   },
