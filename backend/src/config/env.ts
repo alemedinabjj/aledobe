@@ -21,7 +21,6 @@ export const env = {
   allowedOrigins: origins,
   jwtSecret: process.env.JWT_SECRET ?? "",
   cookieSecure: production || bool(process.env.COOKIE_SECURE),
-  devLogin: !production && bool(process.env.AUTH_DEV_LOGIN),
   trustProxy: bool(process.env.TRUST_PROXY ?? "true"),
   rateLimit: Number(process.env.RATE_LIMIT_PER_MINUTE ?? 300),
   google: { clientId: process.env.GOOGLE_CLIENT_ID ?? "", clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "" },

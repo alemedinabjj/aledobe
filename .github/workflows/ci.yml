@@ -42,7 +42,6 @@ jobs:
       JWT_SECRET: ci-${{ github.run_id }}-${{ github.sha }}
       FRONTEND_URL: http://localhost:5173
       API_URL: http://localhost:3000/api
-      AUTH_DEV_LOGIN: "true"
       RATE_LIMIT_PER_MINUTE: "10000"
     steps:
       - uses: actions/checkout@v4
@@ -95,7 +94,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: [backend, frontend]
     env:
-      AUTH_DEV_LOGIN: "true"
       NODE_ENV: development
       E2E_BASE_URL: http://localhost:8080
     steps:

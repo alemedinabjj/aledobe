@@ -69,7 +69,7 @@ export function sampleDoc(name = "Welcome to Aledobe"): Doc {
       y: 200,
       text: "Design together.\nShip faster.",
       fontFamily: "Space Grotesk",
-      fontSize: 84,
+      fontSize: 66,
       fontWeight: 700,
       lineHeight: 102,
       letterSpacing: -3,

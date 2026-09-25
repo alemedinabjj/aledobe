@@ -4,19 +4,13 @@ import request from "supertest"
 import { AppModule } from "../../src/app.module"
 import { configureApp } from "../../src/app.setup"
 import { PrismaService } from "../../src/shared/infrastructure/prisma/prisma.service"
+import { sessionCookie, signedInAgent } from "./session"
 
 describe("Aledobe API (e2e)", () => {
   let app: NestExpressApplication
   let prisma: PrismaService
 
-  const login = async (email: string) => {
-    const agent = request.agent(app.getHttpServer())
-    await agent
-      .post("/api/auth/dev-login")
-      .send({ email, name: email.split("@")[0] })
-      .expect(201)
-    return agent
-  }
+  const login = (email: string) => signedInAgent(app, email)
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({ imports: [AppModule] }).compile()
@@ -110,11 +104,7 @@ describe("Security (e2e)", () => {
   let app: NestExpressApplication
   let prisma: PrismaService
 
-  const login = async (email: string) => {
-    const agent = request.agent(app.getHttpServer())
-    await agent.post("/api/auth/dev-login").send({ email }).expect(201)
-    return agent
-  }
+  const login = (email: string) => signedInAgent(app, email)
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({ imports: [AppModule] }).compile()
@@ -185,20 +175,27 @@ describe("Security (e2e)", () => {
     await request(app.getHttpServer()).get("/api/auth/me").set("Authorization", "Bearer abc.def.ghi").expect(401)
     const agent = await login("revoke@studio.com")
     await agent.get("/api/auth/me").expect(200)
-    const cookie = (await agent.post("/api/auth/dev-login").send({ email: "revoke@studio.com" })).headers["set-cookie"]
+    const cookie = await sessionCookie(app, "revoke@studio.com")
     await agent.post("/api/auth/logout").expect(204)
     await request(app.getHttpServer()).get("/api/auth/me").set("Cookie", cookie).expect(401)
   })
 
   it("sets hardened headers and httpOnly cookies", async () => {
-    const res = await request(app.getHttpServer())
-      .post("/api/auth/dev-login")
-      .send({ email: "h@studio.com" })
-      .expect(201)
+    const res = await (await login("h@studio.com")).post("/api/auth/logout").expect(204)
     expect(res.headers["set-cookie"][0]).toMatch(/HttpOnly/)
     expect(res.headers["set-cookie"][0]).toMatch(/SameSite=Lax/)
     expect(res.headers["x-powered-by"]).toBeUndefined()
     expect(res.headers["x-content-type-options"]).toBe("nosniff")
+  })
+
+  it("offers no way to sign in without an oauth provider", async () => {
+    await request(app.getHttpServer())
+      .post("/api/auth/dev-login")
+      .send({ email: "ghost@studio.com", name: "Ghost" })
+      .expect(404)
+    const res = await request(app.getHttpServer()).get("/api/auth/providers").expect(200)
+    expect(Object.keys(res.body)).toEqual(["providers"])
+    expect(await prisma.user.count()).toBe(0)
   })
 
   it("rejects OAuth callbacks without a valid state", async () => {
