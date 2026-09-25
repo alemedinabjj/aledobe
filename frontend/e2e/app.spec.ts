@@ -1,12 +1,11 @@
 import { expect, test, type Page } from "@playwright/test"
+import { signInAs } from "./session"
 
 const unique = () => `e2e-${Date.now()}-${Math.round(Math.random() * 1e6)}@aledobe.test`
 
 async function signIn(page: Page, email = unique()) {
-  await page.goto("/login")
-  await page.getByLabel("Name").fill("E2E Designer")
-  await page.getByLabel("Email").fill(email)
-  await page.getByRole("button", { name: "Continue", exact: true }).click()
+  await signInAs(page.context(), email, test.info().project.use.baseURL ?? "http://localhost:8080")
+  await page.goto("/dashboard")
   await expect(page).toHaveURL(/\/dashboard/)
 }
 
@@ -20,6 +19,12 @@ test("landing page presents the product", async ({ page }) => {
 test("protected routes redirect to login", async ({ page }) => {
   await page.goto("/dashboard")
   await expect(page).toHaveURL(/\/login/)
+})
+
+test("login only offers oauth providers", async ({ page }) => {
+  await page.goto("/login")
+  await expect(page.getByRole("button", { name: "Continue with Google" })).toBeVisible()
+  await expect(page.locator("input")).toHaveCount(0)
 })
 
 test("user creates a project, designs a file and it persists", async ({ page }) => {

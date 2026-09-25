@@ -1,8 +1,8 @@
-import { useEffect, useState, type FormEvent } from "react"
-import { Link, Navigate, useNavigate, useSearchParams } from "react-router"
+import { useEffect, useState } from "react"
+import { Link, Navigate, useSearchParams } from "react-router"
 import { motion } from "motion/react"
-import { ArrowLeft, Loader2 } from "lucide-react"
-import { Badge, Button, Input, Label, Separator, toast } from "@aledobe/ui"
+import { ArrowLeft } from "lucide-react"
+import { Badge, Button } from "@aledobe/ui"
 import { Logo } from "../components/Logo"
 import { GithubIcon, GoogleIcon, LinkedinIcon } from "../components/BrandIcons"
 import { useSession } from "../lib/session"
@@ -22,40 +22,20 @@ const ERRORS: Record<string, string> = {
 }
 
 export default function Login() {
-  const { user, api, available, ready, setUser } = useSession()
+  const { user, api, available, ready } = useSession()
   const [params] = useSearchParams()
-  const navigate = useNavigate()
-  const [name, setName] = useState("")
-  const [email, setEmail] = useState("")
-  const [busy, setBusy] = useState(false)
   const error = params.get("error")
   const [options, setOptions] = useState<AuthOptions | null>(null)
-  const devLogin = available && !!options?.devLogin
 
   useEffect(() => {
     if (!ready || !available) return
     api
       .authOptions()
       .then(setOptions)
-      .catch(() => setOptions({ providers: [], devLogin: false }))
+      .catch(() => setOptions({ providers: [] }))
   }, [api, ready, available])
 
   if (user) return <Navigate to="/dashboard" replace />
-
-  const submit = async (e: FormEvent) => {
-    e.preventDefault()
-    if (!devLogin) return
-    setBusy(true)
-    try {
-      const u = await api.devLogin(name.trim(), email.trim())
-      setUser(u)
-      navigate("/dashboard")
-    } catch (err) {
-      toast.error((err as Error).message)
-    } finally {
-      setBusy(false)
-    }
-  }
 
   return (
     <div className="grid min-h-screen lg:grid-cols-2">
@@ -107,41 +87,6 @@ export default function Login() {
             <div className="mt-6 rounded-lg border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-rose-200">
               Sign-in is temporarily unavailable. Please try again in a few minutes.
             </div>
-          )}
-          {devLogin && (
-            <>
-              <div className="my-8 flex items-center gap-3 text-xs text-muted-foreground">
-                <Separator className="flex-1" /> developer login
-                <Separator className="flex-1" />
-              </div>
-              <form onSubmit={submit} className="flex flex-col gap-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="name">Name</Label>
-                  <Input
-                    id="name"
-                    required
-                    maxLength={80}
-                    placeholder="Ada Lovelace"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    required
-                    type="email"
-                    placeholder="ada@studio.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                </div>
-                <Button type="submit" size="lg" disabled={busy}>
-                  {busy && <Loader2 className="animate-spin" />} Continue
-                </Button>
-              </form>
-            </>
           )}
           <p className="mt-10 text-center text-xs text-muted-foreground">
             By continuing you agree to our Terms and Privacy Policy.

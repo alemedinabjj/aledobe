@@ -33,7 +33,6 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
 
 export interface AuthOptions {
   providers: Provider[]
-  devLogin: boolean
 }
 
 export interface Backend {
@@ -41,7 +40,6 @@ export interface Backend {
   logout(): Promise<void>
   loginUrl(provider: Provider): string
   authOptions(): Promise<AuthOptions>
-  devLogin(name: string, email: string): Promise<User>
   listProjects(): Promise<Project[]>
   createProject(name: string): Promise<Project>
   updateProject(id: string, data: Partial<Pick<Project, "name" | "color">>): Promise<Project>
@@ -69,7 +67,6 @@ const remote: Backend = {
   logout: () => request("/auth/logout", { method: "POST" }),
   loginUrl: (provider) => `${API_URL}/auth/${provider}`,
   authOptions: () => request("/auth/providers"),
-  devLogin: (name, email) => request("/auth/dev-login", { method: "POST", body: JSON.stringify({ name, email }) }),
   listProjects: () => request("/projects"),
   createProject: (name) => request("/projects", { method: "POST", body: JSON.stringify({ name }) }),
   updateProject: (id, data) => request(`/projects/${id}`, { method: "PATCH", body: JSON.stringify(data) }),

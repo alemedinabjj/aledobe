@@ -1,0 +1,37 @@
+name: Bug
+description: Algo não funciona como deveria
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: O que aconteceu
+      description: E o que você esperava que acontecesse.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Como reproduzir
+      placeholder: |
+        1. Abrir um arquivo
+        2. Selecionar um texto
+        3. ...
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Onde
+      options: [Editor, Dashboard, Login, Landing, API, Outro]
+    validations:
+      required: true
+  - type: input
+    id: env
+    attributes:
+      label: Navegador e sistema
+      placeholder: Chrome 140, macOS
+  - type: textarea
+    id: media
+    attributes:
+      label: Prints ou vídeo

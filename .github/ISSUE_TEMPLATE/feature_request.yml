@@ -1,0 +1,23 @@
+name: Ideia ou funcionalidade
+description: Sugira algo novo pro Aledobe
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Qual problema isso resolve
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Como você imagina
+      description: Se existe algo parecido no Figma ou em outra ferramenta, conta como funciona lá.
+    validations:
+      required: true
+  - type: checkboxes
+    id: contribute
+    attributes:
+      label: Contribuição
+      options:
+        - label: Posso abrir o PR pra isso

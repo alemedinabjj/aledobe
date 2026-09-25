@@ -42,7 +42,7 @@ jobs:
           }
           expect 401 "$BASE_URL/api/auth/me"
           expect 401 "$BASE_URL/api/projects"
-          expect 404 -X POST -H 'Content-Type: application/json' -d '{"email":"x@y.z"}' "$BASE_URL/api/auth/dev-login"
+          expect 404 -X POST -H 'Content-Type: application/json' -d '{"email":"ghost@example.com","name":"Ghost"}' "$BASE_URL/api/auth/dev-login"
           expect 403 -X POST -H 'Origin: https://evil.example' -H 'Content-Type: application/json' -d '{}' "$BASE_URL/api/projects"
           location=$(curl -s -o /dev/null -w '%{redirect_url}' "$BASE_URL/api/auth/google")
           echo "google -> $location"

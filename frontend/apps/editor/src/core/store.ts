@@ -63,6 +63,7 @@ export interface EditorState {
   dirty: number
 
   load: (doc: Doc) => void
+  refreshText: () => void
   commit: (recipe: Recipe) => void
   begin: () => void
   preview: (recipe: Recipe) => void
@@ -151,6 +152,12 @@ export const useEditor = create<EditorState>()((set, get) => ({
   snapping: true,
   transforming: false,
   dirty: 0,
+
+  refreshText: () => {
+    const { doc } = get()
+    const next = apply(doc, () => {})
+    if (next !== doc) set({ doc: next })
+  },
 
   load: (doc) => {
     const finalized = apply(doc, () => {})

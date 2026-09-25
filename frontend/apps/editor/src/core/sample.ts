@@ -69,7 +69,7 @@ export function sampleDoc(name = "Welcome to Aledobe"): Doc {
       y: 200,
       text: "Design together.\nShip faster.",
       fontFamily: "Space Grotesk",
-      fontSize: 84,
+      fontSize: 60,
       fontWeight: 700,
       lineHeight: 102,
       letterSpacing: -3,
@@ -82,7 +82,7 @@ export function sampleDoc(name = "Welcome to Aledobe"): Doc {
     createNode("text", {
       name: "Subtitle",
       x: 80,
-      y: 400,
+      y: 380,
       width: 520,
       textAutoResize: "height",
       text: "Frames, auto layout, vector tools, components-ready layers and export — all in your browser. Double-click any text to edit it.",
