@@ -10,11 +10,11 @@ const HeroScene = lazy(() => import("./HeroScene").then((m) => ({ default: m.Her
 export function Hero() {
   const [step, setStep] = useState(0)
   return (
-    <section className="relative overflow-hidden pt-36 pb-20">
+    <section className="relative flex min-h-[100svh] flex-col justify-center overflow-hidden pt-28 pb-10 sm:pt-32 lg:pt-24 lg:pb-12">
       <div className="pointer-events-none absolute inset-0 bg-grid [mask-image:radial-gradient(ellipse_at_top,black_20%,transparent_70%)]" />
-      <div className="pointer-events-none absolute -top-40 left-1/2 h-[600px] w-[900px] -translate-x-1/2 rounded-full bg-violet-600/25 blur-[140px]" />
-      <div className="relative mx-auto grid max-w-6xl items-center gap-10 px-6 lg:grid-cols-[1.05fr_1fr]">
-        <div>
+      <div className="pointer-events-none absolute -top-40 left-1/2 h-[600px] w-[min(1400px,160vw)] -translate-x-1/2 rounded-full bg-violet-600/25 blur-[140px]" />
+      <div className="relative z-10 wide">
+        <div className="lg:w-[46%] xl:w-[42%]">
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
             <Badge variant="neon" className="mb-6 gap-1.5 px-3 py-1">
               <Sparkles /> 100% free · no credit card
@@ -24,7 +24,7 @@ export function Hero() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.05 }}
-            className="font-display text-5xl leading-[1.02] font-bold tracking-tight sm:text-6xl lg:text-7xl"
+            className="font-display text-[2.6rem] leading-[1.02] font-bold tracking-tight sm:text-6xl lg:text-7xl"
           >
             The design tool
             <br />
@@ -34,7 +34,7 @@ export function Hero() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.15 }}
-            className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground"
+            className="mt-6 max-w-xl text-base leading-relaxed sm:text-lg text-muted-foreground"
           >
             Frames, auto layout, vectors, text, effects, pages and export — a focused Figma alternative that runs in
             your browser. Sign in with Google, GitHub or LinkedIn and start designing in seconds.
@@ -56,7 +56,7 @@ export function Hero() {
               </Link>
             </Button>
           </motion.div>
-          <div className="mt-12 grid max-w-md grid-cols-4 gap-2">
+          <div className="mt-10 grid max-w-md grid-cols-2 gap-x-3 gap-y-3 sm:mt-12 sm:grid-cols-4 sm:gap-2">
             {STEPS.map((s, i) => (
               <button key={s.key} type="button" className="group text-left" onClick={() => setStep(i)}>
                 <div className="h-1 overflow-hidden rounded-full bg-white/10">
@@ -78,7 +78,7 @@ export function Hero() {
               </button>
             ))}
           </div>
-          <div className="mt-3 h-6 max-w-md text-sm text-muted-foreground">
+          <div className="mt-3 min-h-10 max-w-md text-sm sm:min-h-6 text-muted-foreground">
             <AnimatePresence mode="wait">
               <motion.p
                 key={step}
@@ -92,18 +92,18 @@ export function Hero() {
             </AnimatePresence>
           </div>
         </div>
-        <motion.div
-          initial={{ opacity: 0, scale: 0.94 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1, delay: 0.2 }}
-          className="relative aspect-[4/3.4] w-full"
-        >
-          <div className="absolute inset-8 rounded-full bg-fuchsia-500/10 blur-3xl" />
-          <Suspense fallback={<div className="size-full animate-pulse rounded-3xl bg-white/[0.02]" />}>
-            <HeroScene onStep={setStep} />
-          </Suspense>
-        </motion.div>
       </div>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.94 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 1, delay: 0.2 }}
+        className="relative mt-6 aspect-[4/3.4] w-full sm:aspect-[16/10] lg:absolute lg:inset-y-0 lg:right-0 lg:mt-0 lg:aspect-auto lg:w-[60%] lg:[mask-image:linear-gradient(to_right,transparent,black_22%)] 2xl:w-[62%]"
+      >
+        <div className="absolute inset-8 rounded-full bg-fuchsia-500/10 blur-3xl" />
+        <Suspense fallback={<div className="size-full animate-pulse rounded-3xl bg-white/[0.02]" />}>
+          <HeroScene onStep={setStep} />
+        </Suspense>
+      </motion.div>
     </section>
   )
 }
